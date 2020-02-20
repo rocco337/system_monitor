@@ -7,5 +7,6 @@ require (
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/hako/durafmt v0.0.0-20191009132224-3f39dc1ed9f4
 	github.com/shirou/gopsutil v2.20.1+incompatible
+	github.com/stretchr/testify v1.5.1 // indirect
 	golang.org/x/sys v0.0.0-20200219091948-cb0a6d8edb6c // indirect
 )
