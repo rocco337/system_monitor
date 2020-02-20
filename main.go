@@ -11,7 +11,8 @@ func main() {
 
 	for i := 0; i < 10; i++ {
 		time.Sleep(1 * time.Second)
-		monitor.GetCpuThreadsUsage()
+		monitor.GetMemoryUsage()
+
 		fmt.Println("--------------------------")
 	}
 }

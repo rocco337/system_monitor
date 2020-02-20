@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/mem"
 	"github.com/shirou/gopsutil/process"
 
 	"time"
@@ -56,7 +57,7 @@ func (m *SystemMonitor) GetHostInfo() *HostInfo {
 	return hostInfo
 }
 
-//GetCpuThreadsUsage
+//GetCpuThreadsUsage ...
 func (m *SystemMonitor) GetCpuThreadsUsage() {
 	usage, err := cpu.Percent(5+time.Second, true)
 	if err == nil {
@@ -64,6 +65,31 @@ func (m *SystemMonitor) GetCpuThreadsUsage() {
 			fmt.Printf("%d - %f \n", i, usage[i])
 		}
 	}
+}
+
+//GetMemoryUsage ...
+func (m *SystemMonitor) GetMemoryUsage() *VirtualMemory {
+	memStat, err := mem.VirtualMemory()
+	virtualMemory := new(VirtualMemory)
+
+	if err == nil {
+		virtualMemory.Total = memStat.Total
+		virtualMemory.Available = memStat.Available
+		virtualMemory.Used = memStat.Used
+		virtualMemory.UsedPercent = memStat.UsedPercent
+		virtualMemory.Free = memStat.Free
+	}
+
+	return virtualMemory
+}
+
+//VirtualMemory ...
+type VirtualMemory struct {
+	Total       uint64
+	Available   uint64
+	Used        uint64
+	UsedPercent float64
+	Free        uint64
 }
 
 //HostInfo ...
