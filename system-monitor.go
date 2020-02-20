@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/process"
 
@@ -53,6 +54,16 @@ func (m *SystemMonitor) GetHostInfo() *HostInfo {
 
 	hostInfo.PrintLine()
 	return hostInfo
+}
+
+//GetCpuThreadsUsage
+func (m *SystemMonitor) GetCpuThreadsUsage() {
+	usage, err := cpu.Percent(5+time.Second, true)
+	if err == nil {
+		for i := 0; i < len(usage); i++ {
+			fmt.Printf("%d - %f \n", i, usage[i])
+		}
+	}
 }
 
 //HostInfo ...
