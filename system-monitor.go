@@ -59,14 +59,11 @@ func (m *SystemMonitor) GetHostInfo() *HostInfo {
 	return hostInfo
 }
 
-//GetCpuThreadsUsage ...
-func (m *SystemMonitor) GetCpuThreadsUsage() {
-	usage, err := cpu.Percent(5+time.Second, true)
-	if err == nil {
-		for i := 0; i < len(usage); i++ {
-			fmt.Printf("%d - %f \n", i, usage[i])
-		}
-	}
+//GetCPUThreadsUsage ...
+func (m *SystemMonitor) GetCPUThreadsUsage() []float64 {
+	usage, _ := cpu.Percent(2*time.Second, true)
+
+	return usage
 }
 
 //GetMemoryUsage ...
