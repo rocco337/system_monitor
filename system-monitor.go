@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"sort"
+
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/mem"
@@ -35,9 +37,9 @@ func (m *SystemMonitor) GetProcesses() []ProcessInfo {
 		}
 	}
 
-	// sort.Slice(list[:], func(i, j int) bool {
-	// 	return list[i].CPUPercent > list[j].CPUPercent
-	// })
+	sort.Slice(list[:], func(i, j int) bool {
+		return list[i].CPUPercent > list[j].CPUPercent
+	})
 
 	return list
 }
@@ -100,6 +102,7 @@ type HostInfo struct {
 	OS       string
 }
 
+//PrintLine ...
 func (h *HostInfo) PrintLine() {
 	fmt.Printf("%s - %d - %s \n", h.Hostname, h.Procs, h.OS)
 }
