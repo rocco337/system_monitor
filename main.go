@@ -10,12 +10,15 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var addr = flag.String("addr", "127.0.0.1:8080", "http service address")
+//env GOOS=linux GOARCH=arm GOARM=5 go build
+
+var addr = flag.String("addr", "127.0.0.1:8081", "http service address")
 var monitor = SystemMonitor{}
 var processRefreshRate = 2 * time.Second
 
 func main() {
-	fmt.Println("Starting system monitor")
+	flag.Parse()
+	fmt.Printf("Starting system monitor on address: %s \n", *addr)
 	//monitor := new(SystemMonitor)
 
 	http.HandleFunc("/hostInfo", serveHostInfo)
