@@ -13,7 +13,7 @@ import (
 //env GOOS=linux GOARCH=arm GOARM=5 go build
 
 var addr = flag.String("addr", "127.0.0.1:8081", "http service address")
-var processRefreshRate = 2 * time.Second
+var refreshRate = 2 * time.Second
 
 func main() {
 	flag.Parse()
@@ -21,25 +21,25 @@ func main() {
 	monitor := new(SystemMonitor)
 
 	http.HandleFunc("/hostInfo", func(w http.ResponseWriter, r *http.Request) {
-		serveJSON(w, r, func() interface{} {
+		serveJSON(w, r, false, func() interface{} {
 			return monitor.GetHostInfo()
 		})
 	})
 
 	http.HandleFunc("/processes", func(w http.ResponseWriter, r *http.Request) {
-		serveJSON(w, r, func() interface{} {
+		serveJSON(w, r, true, func() interface{} {
 			return monitor.GetProcesses()
 		})
 	})
 
 	http.HandleFunc("/cpuusage", func(w http.ResponseWriter, r *http.Request) {
-		serveJSON(w, r, func() interface{} {
+		serveJSON(w, r, true, func() interface{} {
 			return monitor.GetCPUThreadsUsage()
 		})
 	})
 
 	http.HandleFunc("/memorystat", func(w http.ResponseWriter, r *http.Request) {
-		serveJSON(w, r, func() interface{} {
+		serveJSON(w, r, true, func() interface{} {
 			return monitor.GetMemoryUsage()
 		})
 	})
@@ -64,7 +64,7 @@ func serveFile(w http.ResponseWriter, r *http.Request, filename string) {
 
 var upgrader = websocket.Upgrader{}
 
-func serveJSON(w http.ResponseWriter, r *http.Request, monitorCall func() interface{}) {
+func serveJSON(w http.ResponseWriter, r *http.Request, useTicker bool, monitorCall func() interface{}) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("upgrade:", err)
@@ -73,5 +73,13 @@ func serveJSON(w http.ResponseWriter, r *http.Request, monitorCall func() interf
 
 	defer ws.Close()
 
-	ws.WriteJSON(monitorCall())
+	if useTicker {
+		ticker := time.NewTicker(refreshRate)
+		for range ticker.C {
+			ws.WriteJSON(monitorCall())
+		}
+	} else {
+		ws.WriteJSON(monitorCall())
+	}
+
 }

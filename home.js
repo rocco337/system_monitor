@@ -1,68 +1,34 @@
 "use strict"
 
 window.onload = function () {
-    listenHostInfo();
-    listenProcesses();
-    listenCpuUsage();
-    listenMemorystat();
+    if (!window["WebSocket"]) {
+        alert("Sockets not supported by browser!")
+    }
+
+    var baseUrl = "ws://" + document.location.host;
+
+    listen(baseUrl + "/hostInfo", function (evt) {
+        document.querySelector("#hostInfo").innerHTML = evt.data;
+    });
+
+    listen(baseUrl + "/memorystat", function (evt) {
+        document.querySelector("#memorystat").innerHTML = evt.data;
+    })
+
+    listen(baseUrl + "/processes", renderProcesses)
+    listen(baseUrl + "/cpuusage", renderCpuUsage)
+
 };
 
-function listenHostInfo() {
-    var conn;
-    if (window["WebSocket"]) {
-        conn = new WebSocket("ws://" + document.location.host + "/hostInfo");
-        conn.onclose = function (evt) { connectionClosed(evt) }
-        conn.onmessage = function (evt) {
-            console.log(evt.data)
-            document.querySelector("#hostInfo").innerHTML = evt.data;
-        };
-    } else {
-        webSocketsNotAvailable()
-    }
+function listen(url, onmessage) {
+    var conn = new WebSocket(url);
+    conn.onclose = function (evt) { connectionClosed(evt) }
+    conn.onmessage = function (evt) {
+        console.log("received: ", evt);
+        onmessage(evt);
+    };
+
 }
-
-function listenMemorystat() {
-    var conn;
-    if (window["WebSocket"]) {
-        conn = new WebSocket("ws://" + document.location.host + "/memorystat");
-        conn.onclose = function (evt) { connectionClosed(evt) }
-        conn.onmessage = function (evt) {
-            console.log(evt.data)
-            document.querySelector("#memorystat").innerHTML = evt.data;
-        };
-    } else {
-        webSocketsNotAvailable()
-    }
-}
-
-function listenProcesses() {
-    var conn;
-    if (window["WebSocket"]) {
-        conn = new WebSocket("ws://" + document.location.host + "/processes");
-        conn.onclose = function (evt) { connectionClosed(evt) }
-        conn.onmessage = function (evt) {
-
-            renderProcesses(evt.data)
-
-        };
-    } else {
-        webSocketsNotAvailable()
-    }
-}
-
-function listenCpuUsage() {
-    var conn;
-    if (window["WebSocket"]) {
-        conn = new WebSocket("ws://" + document.location.host + "/cpuusage");
-        conn.onclose = function (evt) { connectionClosed(evt) }
-        conn.onmessage = function (evt) {
-            renderCpuUsage(evt.data)
-        };
-    } else {
-        webSocketsNotAvailable()
-    }
-}
-
 
 function webSocketsNotAvailable() {
     alert("Your browser does not support WebSockets.");
@@ -73,8 +39,8 @@ function connectionClosed(evt) {
     //alert("Connection closed!")
 }
 
-function renderProcesses(json) {
-    var parsed = JSON.parse(json)
+function renderProcesses(evt) {
+    var parsed = JSON.parse(evt.data)
 
     var table = document.createElement("table")
     parsed.forEach(element => {
@@ -91,8 +57,8 @@ function renderProcesses(json) {
     document.querySelector("#processes").appendChild(table)
 }
 
-function renderCpuUsage(json) {
-    var parsed = JSON.parse(json)
+function renderCpuUsage(evt) {
+    var parsed = JSON.parse(evt.data)
 
     var table = document.createElement("table")
 
@@ -101,7 +67,7 @@ function renderCpuUsage(json) {
         var row = document.createElement("tr")
         var td = document.createElement('td');
 
-        td.innerHTML = i + ": " + renderUsage(parsed[i].toFixed(0)) + "    " +  usage;
+        td.innerHTML = i + ": " + renderUsage(parsed[i].toFixed(0)) + "    " + usage;
         row.appendChild(td);
         table.appendChild(row);
     }
@@ -110,10 +76,10 @@ function renderCpuUsage(json) {
     document.querySelector("#cpuusage").appendChild(table)
 }
 
-function renderUsage(usage){
-    var result=""
+function renderUsage(usage) {
+    var result = ""
     for (let i = 0; i < usage; i++) {
-        result+="|"
+        result += "|"
     }
     return result
-}go
+}

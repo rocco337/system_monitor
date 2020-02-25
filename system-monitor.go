@@ -55,7 +55,6 @@ func (m *SystemMonitor) GetHostInfo() *HostInfo {
 		hostInfo.OS = info.OS
 	}
 
-	hostInfo.PrintLine()
 	return hostInfo
 }
 
