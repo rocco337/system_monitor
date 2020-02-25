@@ -13,17 +13,36 @@ import (
 //env GOOS=linux GOARCH=arm GOARM=5 go build
 
 var addr = flag.String("addr", "127.0.0.1:8081", "http service address")
-var monitor = SystemMonitor{}
 var processRefreshRate = 2 * time.Second
 
 func main() {
 	flag.Parse()
 	fmt.Printf("Starting system monitor on address: %s \n", *addr)
-	//monitor := new(SystemMonitor)
+	monitor := new(SystemMonitor)
 
-	http.HandleFunc("/hostInfo", serveHostInfo)
-	http.HandleFunc("/processes", serveProcesses)
-	http.HandleFunc("/cpuusage", serveCpuusage)
+	http.HandleFunc("/hostInfo", func(w http.ResponseWriter, r *http.Request) {
+		serveJSON(w, r, func() interface{} {
+			return monitor.GetHostInfo()
+		})
+	})
+
+	http.HandleFunc("/processes", func(w http.ResponseWriter, r *http.Request) {
+		serveJSON(w, r, func() interface{} {
+			return monitor.GetProcesses()
+		})
+	})
+
+	http.HandleFunc("/cpuusage", func(w http.ResponseWriter, r *http.Request) {
+		serveJSON(w, r, func() interface{} {
+			return monitor.GetCPUThreadsUsage()
+		})
+	})
+
+	http.HandleFunc("/memorystat", func(w http.ResponseWriter, r *http.Request) {
+		serveJSON(w, r, func() interface{} {
+			return monitor.GetMemoryUsage()
+		})
+	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		serveFile(w, r, "home.html")
@@ -36,7 +55,6 @@ func main() {
 }
 
 func serveFile(w http.ResponseWriter, r *http.Request, filename string) {
-
 	if r.Method != "GET" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -46,7 +64,7 @@ func serveFile(w http.ResponseWriter, r *http.Request, filename string) {
 
 var upgrader = websocket.Upgrader{}
 
-func serveHostInfo(w http.ResponseWriter, r *http.Request) {
+func serveJSON(w http.ResponseWriter, r *http.Request, monitorCall func() interface{}) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("upgrade:", err)
@@ -55,37 +73,5 @@ func serveHostInfo(w http.ResponseWriter, r *http.Request) {
 
 	defer ws.Close()
 
-	ws.WriteJSON(monitor.GetHostInfo())
-}
-
-func serveProcesses(w http.ResponseWriter, r *http.Request) {
-	ws, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("upgrade:", err)
-		return
-	}
-
-	defer ws.Close()
-
-	ticker := time.NewTicker(processRefreshRate)
-
-	for range ticker.C {
-		ws.WriteJSON(monitor.GetProcesses())
-	}
-}
-
-func serveCpuusage(w http.ResponseWriter, r *http.Request) {
-	ws, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("upgrade:", err)
-		return
-	}
-
-	defer ws.Close()
-
-	ticker := time.NewTicker(processRefreshRate)
-
-	for range ticker.C {
-		ws.WriteJSON(monitor.GetCPUThreadsUsage())
-	}
+	ws.WriteJSON(monitorCall())
 }

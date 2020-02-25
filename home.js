@@ -4,7 +4,7 @@ window.onload = function () {
     listenHostInfo();
     listenProcesses();
     listenCpuUsage();
-
+    listenMemorystat();
 };
 
 function listenHostInfo() {
@@ -15,6 +15,20 @@ function listenHostInfo() {
         conn.onmessage = function (evt) {
             console.log(evt.data)
             document.querySelector("#hostInfo").innerHTML = evt.data;
+        };
+    } else {
+        webSocketsNotAvailable()
+    }
+}
+
+function listenMemorystat() {
+    var conn;
+    if (window["WebSocket"]) {
+        conn = new WebSocket("ws://" + document.location.host + "/memorystat");
+        conn.onclose = function (evt) { connectionClosed(evt) }
+        conn.onmessage = function (evt) {
+            console.log(evt.data)
+            document.querySelector("#memorystat").innerHTML = evt.data;
         };
     } else {
         webSocketsNotAvailable()
@@ -102,4 +116,4 @@ function renderUsage(usage){
         result+="|"
     }
     return result
-}
+}go
