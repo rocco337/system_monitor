@@ -27,7 +27,6 @@ function listen(url, onmessage) {
         console.log("received: ", evt);
         onmessage(evt);
     };
-
 }
 
 function webSocketsNotAvailable() {

@@ -65,6 +65,7 @@ func serveFile(w http.ResponseWriter, r *http.Request, filename string) {
 var upgrader = websocket.Upgrader{}
 
 func serveJSON(w http.ResponseWriter, r *http.Request, useTicker bool, monitorCall func() interface{}) {
+	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("upgrade:", err)
