@@ -15,14 +15,15 @@ import CpuUsage from './components/CpuUsage.vue'
 
 export default {
   name: 'App',
+
   components: {
-    HostInfo,
+     HostInfo,
     MemoryStat,
     Processes,
-    CpuUsage
+    CpuUsage,
   },  
 }
-
-
 </script>
 
+<style>
+</style>

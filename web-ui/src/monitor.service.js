@@ -21,7 +21,6 @@ export const monitorService = {
           // connectionClosed(evt);
         };
         conn.onmessage = function(evt) {
-          console.log("received: ", evt);
           onmessage(evt);
         };
       }
