@@ -2,20 +2,24 @@
   <div id="app">
     <HostInfo/>
     <MemoryStat/>
-
+    <CpuUsage/>
+    <Processes/>
   </div>
 </template>
 
 <script>
 import HostInfo from './components/HostInfo.vue'
 import MemoryStat from './components/MemoryStat.vue'
-
+import Processes from './components/Processes.vue'
+import CpuUsage from './components/CpuUsage.vue'
 
 export default {
   name: 'App',
   components: {
     HostInfo,
-    MemoryStat
+    MemoryStat,
+    Processes,
+    CpuUsage
   },  
 }
 

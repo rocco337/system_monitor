@@ -8,6 +8,12 @@ export const monitorService = {
     GetMemoryStat(onMessage){
         this.listen(baseUrl + "/memorystat",onMessage)
     },
+    GetListOfProcesses(onMessage){
+        this.listen(baseUrl +"/processes", onMessage)
+    },
+    GetCpuUsage(onMessage){
+      this.listen(baseUrl +"/cpuusage", onMessage)
+  },
     listen(url, onmessage) {
         var conn = new WebSocket(url);
         conn.onclose = function(evt) {
