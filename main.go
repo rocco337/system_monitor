@@ -10,9 +10,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-//env GOOS=linux GOARCH=arm GOARM=5 go build
-
-var addr = flag.String("addr", "127.0.0.1:8081", "http service address")
+var addr = flag.String("addr", "0.0.0.0:8081", "http service address")
 var refreshRate = 2 * time.Second
 
 func main() {
@@ -45,10 +43,7 @@ func main() {
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		serveFile(w, r, "home.html")
-	})
-	http.HandleFunc("/home.js", func(w http.ResponseWriter, r *http.Request) {
-		serveFile(w, r, "home.js")
+		serveFile(w, r, "index.html")
 	})
 
 	log.Fatal(http.ListenAndServe(*addr, nil))

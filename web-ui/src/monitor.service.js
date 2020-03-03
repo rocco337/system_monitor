@@ -1,18 +1,22 @@
-const baseUrl = "ws://localhost:8081";
+function getUrl(){
+  var url =  "ws://" + location.host;
+  console.log(url);
+  return url;
+}
 
 export const monitorService = {
 
     GetHostInfo(onMessage){
-        this.listen(baseUrl + "/hostInfo",onMessage)
+        this.listen(getUrl() + "/hostInfo",onMessage)
     },
     GetMemoryStat(onMessage){
-        this.listen(baseUrl + "/memorystat",onMessage)
+        this.listen(getUrl() + "/memorystat",onMessage)
     },
     GetListOfProcesses(onMessage){
-        this.listen(baseUrl +"/processes", onMessage)
+        this.listen(getUrl() +"/processes", onMessage)
     },
     GetCpuUsage(onMessage){
-      this.listen(baseUrl +"/cpuusage", onMessage)
+      this.listen(getUrl() +"/cpuusage", onMessage)
   },
     listen(url, onmessage) {
         var conn = new WebSocket(url);
