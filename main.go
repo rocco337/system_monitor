@@ -11,34 +11,39 @@ import (
 )
 
 var addr = flag.String("addr", "0.0.0.0:8081", "http service address")
-var refreshRate = 2 * time.Second
+var deafultRefreshRate = 2 * time.Second
 
 func main() {
 	flag.Parse()
 	fmt.Printf("Starting system monitor on address: %s \n", *addr)
 	monitor := new(SystemMonitor)
-
 	http.HandleFunc("/hostInfo", func(w http.ResponseWriter, r *http.Request) {
-		serveJSON(w, r, false, func() interface{} {
+		serveJSON(w, r, false, deafultRefreshRate, func() interface{} {
 			return monitor.GetHostInfo()
 		})
 	})
 
 	http.HandleFunc("/processes", func(w http.ResponseWriter, r *http.Request) {
-		serveJSON(w, r, true, func() interface{} {
+		serveJSON(w, r, true, deafultRefreshRate, func() interface{} {
 			return monitor.GetProcesses()
 		})
 	})
 
 	http.HandleFunc("/cpuusage", func(w http.ResponseWriter, r *http.Request) {
-		serveJSON(w, r, true, func() interface{} {
+		serveJSON(w, r, true, deafultRefreshRate, func() interface{} {
 			return monitor.GetCPUThreadsUsage()
 		})
 	})
 
 	http.HandleFunc("/memorystat", func(w http.ResponseWriter, r *http.Request) {
-		serveJSON(w, r, true, func() interface{} {
+		serveJSON(w, r, true, deafultRefreshRate, func() interface{} {
 			return monitor.GetMemoryUsage()
+		})
+	})
+
+	http.HandleFunc("/temperatures", func(w http.ResponseWriter, r *http.Request) {
+		serveJSON(w, r, true, 1*time.Second, func() interface{} {
+			return GetTemperatures()
 		})
 	})
 
@@ -59,7 +64,7 @@ func serveFile(w http.ResponseWriter, r *http.Request, filename string) {
 
 var upgrader = websocket.Upgrader{}
 
-func serveJSON(w http.ResponseWriter, r *http.Request, useTicker bool, monitorCall func() interface{}) {
+func serveJSON(w http.ResponseWriter, r *http.Request, useTicker bool, refreshRate time.Duration, monitorCall func() interface{}) {
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {

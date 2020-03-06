@@ -1,6 +1,6 @@
 function getUrl(){
-  var url =  "ws://" + location.host;
-  console.log(url);
+  var url =  "ws://localhost:8081"
+  // var url =  "ws://" + location.host;
   return url;
 }
 
@@ -9,6 +9,9 @@ export const monitorService = {
     GetHostInfo(onMessage){
         this.listen(getUrl() + "/hostInfo",onMessage)
     },
+    GetTemperatures(onMessage){
+      this.listen(getUrl() + "/temperatures",onMessage)
+  },
     GetMemoryStat(onMessage){
         this.listen(getUrl() + "/memorystat",onMessage)
     },
