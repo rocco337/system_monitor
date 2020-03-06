@@ -14,6 +14,8 @@
 import { monitorService } from "../monitor.service";
 import TemperaturesGraph from "./TemperaturesGraph";
 
+const maxGraphLength = 120;
+
 export default {
   name: "Temperatures",
   components: {
@@ -23,27 +25,27 @@ export default {
     return {
       datacollection: {},
       Temperatures: null,
-      elapsed: []
+      elapsed: [],
+      elapsedGrouped: []
     };
   },
   mounted() {
     var self = this;
-    const currentTimeStamp = new Date().getTime();
+    const startedReceivingData = new Date().getTime();
     monitorService.GetTemperatures(function(evt) {
       var parsed = JSON.parse(evt.data);
-console.log('received');
       var datasets = [];
       if (self.Temperatures == null) {
-        self.Temperatures={};
-        let i=0;
+        self.Temperatures = {};
+        let i = 0;
         for (var key in parsed) {
           self.Temperatures[key] = {
-                label: key,
-                borderColor: colors[i++],
-                 fill: false,
-                 pointRadius: 0,
-                data: [parsed[key]]
-              }              
+            label: key,
+            borderColor: colors[i++],
+            fill: false,
+            pointRadius: 0,
+            data: [parsed[key]]
+          };
         }
       } else {
         for (let parsedPropKey in parsed) {
@@ -51,7 +53,11 @@ console.log('received');
             if (parsedPropKey === propKey) {
               let prop = self.Temperatures[propKey];
 
-              prop.data.push(parsed[parsedPropKey]);
+              pushLimitedArray(
+                maxGraphLength,
+                prop.data,
+                parsed[parsedPropKey]
+              );
 
               datasets.push(prop);
             }
@@ -59,15 +65,45 @@ console.log('received');
         }
       }
 
-      self.elapsed.push(timeSince(currentTimeStamp));
+      pushLimitedArray(
+        maxGraphLength,
+        self.elapsed,
+        timeSince(startedReceivingData)
+      );
+      self.elapsedGrouped = groupElapsedTimes(self.elapsed, 10);
 
       self.datacollection = {
-        labels: self.elapsed,
+        labels: self.elapsedGrouped,
         datasets: datasets
       };
     });
   }
 };
+
+function groupElapsedTimes(arrayToGroup, maxAllowedLabels) {
+  let grouped = [];
+
+  let groupRate = Math.round(arrayToGroup.length / maxAllowedLabels);
+
+  let lastPushedIndex = 0;
+  for (let ii = 0; ii < arrayToGroup.length; ii++) {   
+    if(ii==0 || ii-lastPushedIndex >=groupRate){
+      grouped.push(arrayToGroup[ii]);
+      lastPushedIndex = ii;
+    }else{
+      grouped.push("");
+    }
+  }
+
+  return grouped;
+}
+
+function pushLimitedArray(limit, array, value) {
+  if (array.length >= limit) {
+    array.shift();
+  }
+  array.push(value);
+}
 
 function timeSince(timeStamp) {
   var now = new Date(),
@@ -95,19 +131,21 @@ function timeSince(timeStamp) {
   }
 }
 
-const colors = ["aqua"  	
-,"lime"  	
-,"silver"  
-,"black"  	
-,"maroon"  	
-,"teal"  
-,"blue"  	
-,"navy"  	
-,"fuchsia"  	
-,"olive"  	
-,"yellow"  
-,"gray"  	
-,"purple"  
-,"green"  	
-,"red"];
+const colors = [
+  "aqua",
+  "lime",
+  "silver",
+  "black",
+  "maroon",
+  "teal",
+  "blue",
+  "navy",
+  "fuchsia",
+  "olive",
+  "yellow",
+  "gray",
+  "purple",
+  "green",
+  "red"
+];
 </script>

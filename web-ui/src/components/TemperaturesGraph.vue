@@ -12,6 +12,7 @@ export default {
   data () {
           return {
             options: { 
+              animation: false,
               scales: {
                 yAxes: [{
                   ticks: {

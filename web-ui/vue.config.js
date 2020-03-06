@@ -14,11 +14,11 @@ module.exports = {
     },
     plugins: [
 
-    //   new HtmlWebpackPlugin({
-    //     template: 'public/index.html', 
-    //     inlineSource: '.(js|css|woff)$' // embed all javascript and css inline
-    //   }),
-    //   new HtmlWebpackInlineSourcePlugin()
+      new HtmlWebpackPlugin({
+        template: 'public/index.html', 
+        inlineSource: '.(js|css|woff)$' // embed all javascript and css inline
+      }),
+      new HtmlWebpackInlineSourcePlugin()
     ]  
   },
   pluginOptions: {
