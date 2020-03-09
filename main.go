@@ -17,6 +17,7 @@ func main() {
 	flag.Parse()
 	fmt.Printf("Starting system monitor on address: %s \n", *addr)
 	monitor := new(SystemMonitor)
+
 	http.HandleFunc("/hostInfo", func(w http.ResponseWriter, r *http.Request) {
 		serveJSON(w, r, false, deafultRefreshRate, func() interface{} {
 			return monitor.GetHostInfo()
@@ -77,7 +78,12 @@ func serveJSON(w http.ResponseWriter, r *http.Request, useTicker bool, refreshRa
 	if useTicker {
 		ticker := time.NewTicker(refreshRate)
 		for range ticker.C {
-			ws.WriteJSON(monitorCall())
+			fmt.Printf("Serving: %s \n", r.RequestURI)
+			err := ws.WriteJSON(monitorCall())
+			if err != nil {
+				fmt.Println(err)
+				break
+			}
 		}
 	} else {
 		ws.WriteJSON(monitorCall())
