@@ -72,13 +72,11 @@ func serveJSON(w http.ResponseWriter, r *http.Request, useTicker bool, refreshRa
 		log.Println("upgrade:", err)
 		return
 	}
-
 	defer ws.Close()
 
 	if useTicker {
 		ticker := time.NewTicker(refreshRate)
 		for range ticker.C {
-			fmt.Printf("Serving: %s \n", r.RequestURI)
 			err := ws.WriteJSON(monitorCall())
 			if err != nil {
 				fmt.Println(err)

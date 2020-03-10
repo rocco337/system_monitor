@@ -22,13 +22,18 @@ export const monitorService = {
       this.listen(getUrl() +"/cpuusage", onMessage)
   },
     listen(url, onmessage) {
-        var conn = new WebSocket(url);
+        var conn = new WebSocket(url);  
+
         conn.onclose = function(evt) {
-          console.log(evt);
-          // connectionClosed(evt);
+          console.log('close:', evt, new Date());
         };
+        
         conn.onmessage = function(evt) {
-          onmessage(evt);
+          onmessage(evt, conn);
         };
+
+        conn.onerror = function(evt){
+          console.log("web socket error", evt)
+        }
       }
 };

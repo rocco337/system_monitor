@@ -2,6 +2,7 @@
   <q-card flat bordered>
     <q-card-section>
       <strong class="text-h6">Processes</strong>
+      <q-toggle v-model="IsEnabled" />
     </q-card-section>
 
     <q-card-section class="q-pt-none">
@@ -13,7 +14,7 @@
         hide-bottom
         :pagination.sync="pagination"
         :rows-per-page-options="[0]"
-         :dense="$q.screen.lt.md"
+        :dense="$q.screen.lt.md"
       />
     </q-card-section>
   </q-card>
@@ -26,6 +27,7 @@ export default {
   data() {
     return {
       Processes: [],
+      IsEnabled: true,
       pagination: {
         page: 1,
         rowsPerPage: 20
@@ -41,11 +43,31 @@ export default {
     };
   },
   mounted() {
+   this.loadData();
+  },
+  watch: {
+    IsEnabled: function(newVal) {
+      if(!newVal){
+        this.Processes = [];
+      }else{
+        this.loadData();
+      }
+    }
+  },
+  methods: {
+    loadData() {
     var self = this;
-    monitorService.GetListOfProcesses(function(evt) {
+
+       monitorService.GetListOfProcesses(function(evt, conn) {
+      if(!self.IsEnabled){
+        self.Processes = [];
+        conn.close();
+        return;
+      }
       var parsed = JSON.parse(evt.data);
       self.Processes = parsed;
     });
+    }
   }
 };
 </script>
