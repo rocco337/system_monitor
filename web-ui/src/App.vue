@@ -1,22 +1,40 @@
 <template>
   <div id="app">
-     <div class="row">
-      <div class="col-12">
-         <HostInfo />
+    <div class="q-pa-md">
+      <div class="row">
+        <div class="col-12">
+          <HostInfo />
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-6">
-         <Temperatures />
-      </div>
-      <div class="col-6">
-        <CpuUsage />
-        <MemoryStat />
+    <div class="q-pa-md">
+      <div class="row">
+        <div class="col-6">
+          <div class="q-pa-md">
+            <Temperatures />
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="q-pa-md">
+            <div class="column" style="height:350px">
+              <div class="col-auto">
+                <CpuUsage />
+              </div>
+              <div class="col col-md-2">
+                <MemoryStat />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-     <div class="row">
-      <div class="col-12">
-        <Processes />
+
+    <!-- Processes -->
+    <div class="q-pa-md">
+      <div class="row">
+        <div class="col-12">
+          <Processes />
+        </div>
       </div>
     </div>
   </div>

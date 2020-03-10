@@ -1,6 +1,6 @@
 function getUrl(){
-  // var url =  "ws://localhost:8081"
-  var url =  "ws://" + location.host;
+  var url =  "ws://localhost:8081"
+  //var url =  "ws://" + location.host;
   return url;
 }
 

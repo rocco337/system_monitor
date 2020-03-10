@@ -32,6 +32,7 @@ export default {
       self.Uptime = parsed.Uptime;
       self.Procs = parsed.Procs;
       self.OS = parsed.OS;
+      document.title = parsed.Hostname + " (" + parsed.OS + ")";
     });
   }
 };
