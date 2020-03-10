@@ -10,4 +10,4 @@
 * Start go backend: ".\system_monitor"
 
 ### Screenshot
-![](Shttps://raw.githubusercontent.com/rocco337/system_monitor/master/Screenshot%20from%202020-03-10%2021-28-20.png)
+![](https://raw.githubusercontent.com/rocco337/system_monitor/master/Screenshot%20from%202020-03-10%2021-28-20.png)
