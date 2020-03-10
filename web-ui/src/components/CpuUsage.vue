@@ -7,7 +7,7 @@
 
     <q-card-section class="q-pt-none">
       <div v-for="(usage, index) in Usages" v-bind:key="index" style="margin-bottom:2px;">
-        <q-linear-progress size="20px" :value="usage/100" color="secondary">
+        <q-linear-progress size="20px" :value="usage/100" color="info">
           <div class="absolute-full flex flex-center">
             <q-badge color="white" text-color="accent" :label="usage + ' %'" />
           </div>

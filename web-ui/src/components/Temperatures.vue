@@ -6,7 +6,7 @@
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <temperatures-graph :chart-data="datacollection" />
+      <temperatures-graph :chart-data="datacollection" :height="350" />
     </q-card-section>
   </q-card>
 </template>
