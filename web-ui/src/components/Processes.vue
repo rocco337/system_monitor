@@ -35,8 +35,8 @@ export default {
       Columns: [
         { name: "Pid", label: "Pid", field: "Pid" },
         { name: "Name", label: "Name", field: "Name" },
-        { name: "CPUPercent", label: "CPU", field: "CPUPercent" },
-        { name: "MemPercent", label: "Mem", field: "MemPercent" },
+        { name: "CPUPercent", label: "CPU", field: "CPUPercent", format: val => `${val.toFixed(2)} %`, },
+        { name: "MemPercent", label: "Mem", field: "MemPercent", format: val => `${val.toFixed(2)} %`, },
         { name: "Username", label: "Username", field: "Username" },
         { name: "Uptime", label: "Uptime", field: "Uptime" }
       ]

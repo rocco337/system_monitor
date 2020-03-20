@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"sort"
 
+	"time"
+
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/mem"
 	"github.com/shirou/gopsutil/process"
-
-	"time"
 )
 
 //SystemMonitor ...
@@ -27,11 +27,16 @@ func (m *SystemMonitor) GetProcesses() []ProcessInfo {
 		if err == nil {
 			procInfo := ProcessInfo{}
 			procInfo.Pid = proc.Pid
-			procInfo.Name, _ = proc.Name()
+			procInfo.Name, _ = proc.Exe()
 			procInfo.Status, _ = proc.Status()
 			procInfo.CPUPercent, _ = proc.CPUPercent()
 			procInfo.MemPercent, _ = proc.MemoryPercent()
 			procInfo.Username, _ = proc.Username()
+
+			createdTime, _ := proc.CreateTime()
+
+			duration := time.Now().Sub(time.Unix(createdTime/1000, 0))
+			procInfo.Uptime = formatDuration(&duration)
 
 			list = append(list, procInfo)
 		}
@@ -50,9 +55,13 @@ func (m *SystemMonitor) GetHostInfo() *HostInfo {
 	info, err := host.Info()
 	if err == nil {
 		hostInfo.Hostname = info.Hostname
-		hostInfo.Uptime = time.Unix(int64(info.Uptime), 0)
 		hostInfo.Procs = info.Procs
 		hostInfo.OS = info.OS
+
+		createdTime := int64(info.BootTime)
+
+		duration := time.Now().Sub(time.Unix(createdTime, 0))
+		hostInfo.Uptime = formatDuration(&duration)
 	}
 
 	return hostInfo
@@ -93,7 +102,7 @@ type VirtualMemory struct {
 //HostInfo ...
 type HostInfo struct {
 	Hostname string
-	Uptime   time.Time
+	Uptime   string
 	Procs    uint64
 	OS       string
 }
@@ -111,10 +120,18 @@ type ProcessInfo struct {
 	CPUPercent float64
 	MemPercent float32
 	Username   string
-	Uptime     time.Duration
+	Uptime     string
 }
 
 //PrintLine ...
 func (p *ProcessInfo) PrintLine() {
 	fmt.Printf("%d - %s - %s - %f - %f - %s\n", p.Pid, p.Name, p.Status, p.CPUPercent, p.MemPercent, p.Username)
+}
+
+func formatDuration(d *time.Duration) string {
+	rounded := d.Round(time.Minute)
+	h := rounded / time.Hour
+	rounded -= h * time.Hour
+	m := rounded / time.Minute
+	return fmt.Sprintf("%02d:%02d", h, m)
 }

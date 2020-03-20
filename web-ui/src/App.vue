@@ -16,7 +16,7 @@
         </div>
         <div class="col-6">
           <div class="q-pa-md">
-            <div class="column" style="height:350px">
+            <div class="column">
               <div class="col-auto">
                 <CpuUsage />
               </div>
