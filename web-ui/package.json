@@ -10,7 +10,7 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "@vue/cli-service-global": "^4.2.2",
-    "chart.js": "^2.9.3",
+    "chart.js": "^2.9.4",
     "core-js": "^3.6.4",
     "quasar": "^1.0.0",
     "vue": "^2.6.11",
