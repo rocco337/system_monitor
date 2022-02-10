@@ -26,7 +26,7 @@
     "eslint-plugin-vue": "^6.1.2",
     "html-webpack-inline-source-plugin": "0.0.10",
     "html-webpack-plugin": "^3.2.0",
-    "node-sass": "^4.13.0",
+    "node-sass": "^7.0.0",
     "sass-loader": "^8.0.0",
     "vue-cli-plugin-quasar": "~2.0.0",
     "vue-loader": "^15.9.0",
